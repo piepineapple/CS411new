@@ -1,42 +1,49 @@
-import logo from './logo.svg';
-import React, {useState} from 'react';
-import './App.css';
-
-
+import React, { useState } from 'react';
 
 function App() {
+  const [inputValue, setInputValue] = useState('');
+  const [showPlaylist, setShowPlaylist] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-
-  const [thoughts, setThoughts] = useState('');
-  const handleThoughtsChange = (event) => {
-    setThoughts(event.target.value);
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
+    // Clear error message when user starts typing
+    setErrorMessage('');
   };
 
+  const handleEnterButtonClick = () => {
+    if (inputValue.trim() === '') {
+      setErrorMessage('Input needed');
+    } else {
+      setShowPlaylist(true);
+    }
+  };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <h1>Thoughts from today to generate a Spotify playlist: </h1>
-        <textarea
-          value = {thoughts}
-          onChange = {handleThoughtsChange}
-          placeholder = "Enter your thoughts here..."
-          rows = {4}
-          cols = {50}
+    <div id="root" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <div className="card" style={{ textAlign: 'center' }}>
+        <h1>Music & Thoughts Generator</h1>
+        <input 
+          type="text" 
+          placeholder="Enter text here" 
+          value={inputValue} 
+          onChange={handleInputChange} 
+          style={{ margin: '10px' }}
         />
-      </header>
+        <br />
+        <button onClick={handleEnterButtonClick}>Enter</button>
+        {errorMessage && (
+          <p style={{ color: 'red' }}>{errorMessage}</p>
+        )}
+        {showPlaylist && (
+          <div>
+            <p style={{ marginTop: '20px' }}>Today's Playlist: {inputValue}</p>
+            {/* add more playlist items here */}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
+
+export default App;
