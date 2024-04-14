@@ -37,7 +37,25 @@ function App() {
     if (inputValue.trim() === '') {
       setErrorMessage('Input needed');
     } else {
-      setShowPlaylist(true);
+      // Send journal entry to backend for preprocessing
+      fetch('/process_journal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ journal_entry: inputValue })
+      })
+        // Convert it to json format
+        .then(response => response.json())
+        .then(data => {
+          // Handle response from backend
+          setShowPlaylist(true);
+          setProcessedEntry(data.processedEntry);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          // Handle error if needed
+        });
     }
   };
 
