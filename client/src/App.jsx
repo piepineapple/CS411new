@@ -41,7 +41,7 @@ function App() {
       setErrorMessage('Input needed');
     } else {
       // Send journal entry to backend for preprocessing
-      fetch('http://localhost:5173/process_journal', {
+      fetch('/process_journal', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -49,7 +49,13 @@ function App() {
         body: JSON.stringify({ journal_entry: inputValue })
       })
         // Convert it to json format
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          console.log(response.json())
+          return response.json();
+        })
         .then(data => {
           // Handle response from backend
           setShowPlaylist(true);
