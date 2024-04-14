@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 
+
 function App() {
 
   // Google oAuth 
@@ -26,6 +27,8 @@ function App() {
   const [inputValue, setInputValue] = useState('');
   const [showPlaylist, setShowPlaylist] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [processedEntry, setProcessedEntry] = useState('');
+
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
@@ -38,7 +41,7 @@ function App() {
       setErrorMessage('Input needed');
     } else {
       // Send journal entry to backend for preprocessing
-      fetch('/process_journal', {
+      fetch('http://localhost:5173/process_journal', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -78,7 +81,7 @@ function App() {
         {showPlaylist && (
           <div>
             <p style={{ marginTop: '20px' }}>Today's Playlist: {inputValue}</p>
-            {/* add more playlist items here */}
+            <p>{processedEntry}</p>
           </div>
         )}
       </div>
