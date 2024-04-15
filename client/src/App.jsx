@@ -34,30 +34,22 @@ function App() {
     if (inputValue.trim() === '') {
       setErrorMessage('Input needed');
     } else {
-      // Send journal entry to backend for preprocessing
-      fetch('/process_journal', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ journal_entry: inputValue })
-      })
-        // Convert it to json format
+      fetch(`http://localhost:5000/weather?city=${encodeURIComponent(inputValue)}`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
-          console.log(response.json())
           return response.json();
         })
         .then(data => {
-          // Handle response from backend
+          console.log(data);
+          setErrorMessage('');
           setShowPlaylist(true);
           setProcessedEntry(data.processedEntry);
         })
         .catch(error => {
-          console.error('Error:', error);
-          // Handle error if needed
+          console.error('Error Fetching The Weather:', error);
+          setErrorMessage('Error Fetching The Weather!');
         });
     }
   };
