@@ -5,6 +5,8 @@ const cors = require('cors');
 
 const corsOptions = {
     origin: 'http://localhost:5173',
+    methods: ['GET', 'POST'], // Methods allowed for CORS
+    credentials: true // / This allows cookies to be sent along with the request
 };
 
 const app = express();
@@ -13,9 +15,11 @@ app.use(express.json());
 
 const journal = require('./models/journal');
 const router = express.Router();
+router.use(cors(corsOptions));
+router.use(express.json());
 
 
-app.get('/weather', (req, res) => {
+router.get('/weather', (req, res) => { //switched app.get to router.get
     const city = req.query.city; // access the city sent as a query
     if (!city) {
         return res.status(400).json({ error: 'City needed!' });
