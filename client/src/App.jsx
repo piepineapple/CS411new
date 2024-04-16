@@ -57,11 +57,11 @@ function App() {
   return (
     <div id="root" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', textAlign: 'center', background: 'linear-gradient(135deg, #FFD700, #ADD8E6, #FFC0CB)' }}>
       <div className="card" style={{ padding: '20px', maxWidth: '400px', width: '80%', background: 'rgba(255, 255, 255, 0.2)', borderRadius: '10px' }}>
-        <h1 style={{ color: '#333' }}>JournalX</h1>
+        <h1 style={{ color: '#333' }}>Mood Forecast</h1>
         <div id="sign-in-div" style={{ marginBottom: '10px' }}> </div>
         <input
           type="text"
-          placeholder="Enter text here"
+          placeholder="Enter a location"
           value={inputValue}
           onChange={handleInputChange}
           style={{ margin: '10px', textAlign: 'center', width: '90%', height: '40px', padding: '10px', background: 'rgba(255, 255, 255, 0.8)', border: 'none', borderBottom: '1px solid #ccc', outline: 'none', borderRadius: '5px', color: '#333', fontSize: '20px', fontWeight: 'bold' }}
