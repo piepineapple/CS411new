@@ -42,10 +42,10 @@ function App() {
           return response.json();
         })
         .then(data => {
-          console.log(data);
+          console.log("The weather conditions are ", data.condition);
           setErrorMessage('');
           setShowPlaylist(true);
-          setProcessedEntry(data.processedEntry);
+          setProcessedEntry(data.condition); // Update the state with the weather condition
         })
         .catch(error => {
           console.error('Error Fetching The Weather:', error);

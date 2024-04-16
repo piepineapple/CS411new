@@ -31,7 +31,7 @@ router.get('/weather', (req, res) => { //switched app.get to router.get
         .then((response) => {
             // obtain only the main weather conditions from the call
             const condition = response.data.weather[0].main;
-            // console.log('Conditions:', condition);
+            console.log('Conditions:', condition);
         })
         .catch(error => res.status(500).json({ error: error.toString() }));
 })
