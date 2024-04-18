@@ -30,28 +30,37 @@ function App() {
     setErrorMessage('');
   };
 
-  const handleEnterButtonClick = () => {
+  const handleSpotifyLogin = () => {
+    window.location.href = 'http://localhost:5000/login'; // redirect to the  spotify login page
+  };
+
+  const handleEnterAndLogin = () => {
     if (inputValue.trim() === '') {
       setErrorMessage('Input needed');
     } else {
-      fetch(`http://localhost:5000/weather?city=${encodeURIComponent(inputValue)}`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then(data => {
-          console.log("The weather conditions are ", data.condition);
-          setErrorMessage('');
-          setShowPlaylist(true);
-          setProcessedEntry(data.condition); // Update the state with the weather condition
-        })
-        .catch(error => {
-          console.error('Error Fetching The Weather:', error);
-          setErrorMessage('Error Fetching The Weather!');
-        });
+      handleSpotifyLogin();  // Trigger Spotify login
+      fetchWeatherData();  // Fetch weather data
     }
+  };
+
+  const fetchWeatherData = () => {
+    fetch(`http://localhost:5000/weather?city=${encodeURIComponent(inputValue)}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("The weather conditions are ", data.condition);
+        setErrorMessage('');
+        setShowPlaylist(true);
+        setProcessedEntry(data.condition); // Update the state with the weather condition
+      })
+      .catch(error => {
+        console.error('Error Fetching The Weather:', error);
+        setErrorMessage('Error Fetching The Weather!');
+      });
   };
 
   return (
@@ -67,7 +76,7 @@ function App() {
           style={{ margin: '10px', textAlign: 'center', width: '90%', height: '40px', padding: '10px', background: 'rgba(255, 255, 255, 0.8)', border: 'none', borderBottom: '1px solid #ccc', outline: 'none', borderRadius: '5px', color: '#333', fontSize: '20px', fontWeight: 'bold' }}
         />
         <br />
-        <button onClick={handleEnterButtonClick} style={{ background: 'transparent', border: 'none', padding: '10px 20px', cursor: 'pointer', borderRadius: '5px', color: '#333', fontSize: '18px', boxShadow: '0 2px 2px rgba(0, 0, 0, 0.1)' }}>Enter</button>
+        <button onClick={handleEnterAndLogin} style={{ background: 'transparent', border: 'none', padding: '10px 20px', cursor: 'pointer', borderRadius: '5px', color: '#333', fontSize: '18px', boxShadow: '0 2px 2px rgba(0, 0, 0, 0.1)' }}>Enter and Login with Spotify</button>
         {errorMessage && (
           <p style={{ color: 'red' }}>{errorMessage}</p>
         )}
