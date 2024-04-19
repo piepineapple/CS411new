@@ -30,61 +30,78 @@ function App() {
     setErrorMessage('');
   };
 
-  const handleEnterButtonClick = () => {
+  const handleSpotifyLogin = () => {
+    window.location.href = 'http://localhost:5000/login'; // redirect to the  spotify login page
+  };
+
+  const handleEnterAndLogin = () => {
     if (inputValue.trim() === '') {
       setErrorMessage('Input needed');
-    } else {
-      // Send journal entry to backend for preprocessing
-      fetch('/process_journal', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ journal_entry: inputValue })
-      })
-        // Convert it to json format
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          console.log(response.json())
-          return response.json();
-        })
-        .then(data => {
-          // Handle response from backend
-          setShowPlaylist(true);
-          setProcessedEntry(data.processedEntry);
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          // Handle error if needed
-        });
+      return; // Stop the function if input is empty
     }
+    handleSpotifyLogin();  // Initiate Spotify login
+    fetchWeatherData();  // Fetch weather data
+  };
+
+
+  const fetchWeatherData = () => {
+    fetch(`http://localhost:5000/weather?city=${encodeURIComponent(inputValue)}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("The weather conditions are ", data.condition);
+        setErrorMessage('');
+        console.log("Received playlist data:", data);
+        setShowPlaylist(true);
+        setPlaylistData(data);
+      })
+      .catch(error => {
+        console.error('Error Fetching The Weather:', error);
+        setErrorMessage('Error Fetching The Weather!');
+      });
+  };
+
+
+  const renderSpotifyPlayer = () => {
+    if (!playlistData || !playlistData.spotifyUri) {
+      console.log("No playlist URI found or playlistData is null.");
+      return null;
+    }
+    const src = `https://open.spotify.com/embed/playlist/${playlistData.spotifyUri.split(':').pop()}`;
+    return (
+      <iframe
+        src={src}
+        width="300"
+        height="380"
+        frameBorder="0"
+        allowTransparency="true"
+        allow="encrypted-media"
+      ></iframe>
+    );
   };
 
   return (
     <div id="root" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', textAlign: 'center', background: 'linear-gradient(135deg, #FFD700, #ADD8E6, #FFC0CB)' }}>
       <div className="card" style={{ padding: '20px', maxWidth: '400px', width: '80%', background: 'rgba(255, 255, 255, 0.2)', borderRadius: '10px' }}>
-        <h1 style={{ color: '#333' }}>JournalX</h1>
+        <h1 style={{ color: '#333' }}>Mood Forecast</h1>
         <div id="sign-in-div" style={{ marginBottom: '10px' }}> </div>
         <input
           type="text"
-          placeholder="Enter text here"
+          placeholder="Enter a location"
           value={inputValue}
           onChange={handleInputChange}
           style={{ margin: '10px', textAlign: 'center', width: '90%', height: '40px', padding: '10px', background: 'rgba(255, 255, 255, 0.8)', border: 'none', borderBottom: '1px solid #ccc', outline: 'none', borderRadius: '5px', color: '#333', fontSize: '20px', fontWeight: 'bold' }}
         />
         <br />
-        <button onClick={handleEnterButtonClick} style={{ background: 'transparent', border: 'none', padding: '10px 20px', cursor: 'pointer', borderRadius: '5px', color: '#333', fontSize: '18px', boxShadow: '0 2px 2px rgba(0, 0, 0, 0.1)' }}>Enter</button>
+        <button onClick={handleEnterAndLogin} style={{ background: 'transparent', border: 'none', padding: '10px 20px', cursor: 'pointer', borderRadius: '5px', color: '#333', fontSize: '18px', boxShadow: '0 2px 2px rgba(0, 0, 0, 0.1)' }}>Enter and Login with Spotify</button>
         {errorMessage && (
           <p style={{ color: 'red' }}>{errorMessage}</p>
         )}
-        {showPlaylist && (
-          <div>
-            <p style={{ marginTop: '20px' }}>Today's Playlist: {inputValue}</p>
-            <p>{processedEntry}</p>
-          </div>
-        )}
+        {showPlaylist && renderSpotifyPlayer()}
       </div>
     </div>
   );
