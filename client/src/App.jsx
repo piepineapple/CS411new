@@ -37,11 +37,12 @@ function App() {
   const handleEnterAndLogin = () => {
     if (inputValue.trim() === '') {
       setErrorMessage('Input needed');
-    } else {
-      handleSpotifyLogin();  // Trigger Spotify login
-      fetchWeatherData();  // Fetch weather data
+      return; // Stop the function if input is empty
     }
+    handleSpotifyLogin();  // Initiate Spotify login
+    fetchWeatherData();  // Fetch weather data
   };
+
 
   const fetchWeatherData = () => {
     fetch(`http://localhost:5000/weather?city=${encodeURIComponent(inputValue)}`)
@@ -54,13 +55,33 @@ function App() {
       .then(data => {
         console.log("The weather conditions are ", data.condition);
         setErrorMessage('');
+        console.log("Received playlist data:", data);
         setShowPlaylist(true);
-        setProcessedEntry(data.condition); // Update the state with the weather condition
+        setPlaylistData(data);
       })
       .catch(error => {
         console.error('Error Fetching The Weather:', error);
         setErrorMessage('Error Fetching The Weather!');
       });
+  };
+
+
+  const renderSpotifyPlayer = () => {
+    if (!playlistData || !playlistData.spotifyUri) {
+      console.log("No playlist URI found or playlistData is null.");
+      return null;
+    }
+    const src = `https://open.spotify.com/embed/playlist/${playlistData.spotifyUri.split(':').pop()}`;
+    return (
+      <iframe
+        src={src}
+        width="300"
+        height="380"
+        frameBorder="0"
+        allowTransparency="true"
+        allow="encrypted-media"
+      ></iframe>
+    );
   };
 
   return (
@@ -80,12 +101,7 @@ function App() {
         {errorMessage && (
           <p style={{ color: 'red' }}>{errorMessage}</p>
         )}
-        {showPlaylist && (
-          <div>
-            <p style={{ marginTop: '20px' }}>Today's Playlist: {inputValue}</p>
-            <p>{processedEntry}</p>
-          </div>
-        )}
+        {showPlaylist && renderSpotifyPlayer()}
       </div>
     </div>
   );
