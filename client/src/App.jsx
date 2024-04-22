@@ -7,7 +7,7 @@ function App() {
 
   const handleCallbackResponse = (response) => {
     const jwtToken = response.credential;
-    localStorage.setItem('jwtToken', jwtToken);
+    //localStorage.setItem('jwtToken', jwtToken);
     const decodedToken = jwtDecode(jwtToken); //decode JWT token to retrieve username
     const userName = decodedToken.name; //retrieve username
     setUserName(userName);
