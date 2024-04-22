@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode'
 
 function App() {
   const google = window.google;
 
+
   const handleCallbackResponse = (response) => {
-    console.log("Encoded JWT ID token: " + response.credential)
+    const jwtToken = response.credential;
+    localStorage.setItem('jwtToken', jwtToken);
+    const decodedToken = jwtDecode(jwtToken); //decode JWT token to retrieve username
+    const userName = decodedToken.name; //retrieve username
+    setUserName(userName);
   }
+
+
 
   useEffect(() => {
     google.accounts.id.initialize({
@@ -13,16 +21,19 @@ function App() {
       callback: handleCallbackResponse
     });
 
+
     google.accounts.id.renderButton(
       document.getElementById("sign-in-div"),
       { theme: "outline", size: "large" }
     );
   }, []);
 
+
   const [inputValue, setInputValue] = useState('');
   const [showPlaylist, setShowPlaylist] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [processedEntry, setProcessedEntry] = useState('');
+
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
@@ -30,9 +41,11 @@ function App() {
     setErrorMessage('');
   };
 
+
   const handleSpotifyLogin = () => {
     window.location.href = 'http://localhost:5000/login'; // redirect to the  spotify login page
   };
+
 
   const handleEnterAndLogin = () => {
     if (inputValue.trim() === '') {
@@ -42,6 +55,8 @@ function App() {
     handleSpotifyLogin();  // Initiate Spotify login
     fetchWeatherData();  // Fetch weather data
   };
+
+
 
 
   const fetchWeatherData = () => {
@@ -66,6 +81,8 @@ function App() {
   };
 
 
+
+
   const renderSpotifyPlayer = () => {
     if (!playlistData || !playlistData.spotifyUri) {
       console.log("No playlist URI found or playlistData is null.");
@@ -84,11 +101,13 @@ function App() {
     );
   };
 
+
   return (
     <div id="root" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', textAlign: 'center', background: 'linear-gradient(135deg, #FFD700, #ADD8E6, #FFC0CB)' }}>
       <div className="card" style={{ padding: '20px', maxWidth: '400px', width: '80%', background: 'rgba(255, 255, 255, 0.2)', borderRadius: '10px' }}>
         <h1 style={{ color: '#333' }}>Mood Forecast</h1>
         <div id="sign-in-div" style={{ marginBottom: '10px' }}> </div>
+        {userName && <p>Welcome, {userName}</p>}
         <input
           type="text"
           placeholder="Enter a location"
@@ -107,4 +126,8 @@ function App() {
   );
 }
 
+
 export default App;
+
+
+
