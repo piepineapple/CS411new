@@ -22,7 +22,7 @@ function App() {
   const [inputValue, setInputValue] = useState('');
   const [showPlaylist, setShowPlaylist] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [processedEntry, setProcessedEntry] = useState('');
+  const [playlistUri, setPlaylistUri] = useState('');
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
@@ -30,16 +30,13 @@ function App() {
     setErrorMessage('');
   };
 
-  const handleSpotifyLogin = () => {
-    window.location.href = 'http://localhost:5000/login'; // redirect to the  spotify login page
-  };
-
   const handleEnterAndLogin = () => {
     if (inputValue.trim() === '') {
       setErrorMessage('Input needed');
       return; // Stop the function if input is empty
     }
-    handleSpotifyLogin();  // Initiate Spotify login
+
+    window.location.href = 'http://localhost:5000/login'; // Initiate Spotify login
     fetchWeatherData();  // Fetch weather data
   };
 
@@ -50,14 +47,12 @@ function App() {
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        return response.json();
+        return response.text();
       })
-      .then(data => {
-        console.log("The weather conditions are ", data.condition);
-        setErrorMessage('');
-        console.log("Received playlist data:", data);
+      .then(playlistUri => {
+        setPlaylistUri(playlistUri);
         setShowPlaylist(true);
-        setPlaylistData(data);
+        setErrorMessage('');
       })
       .catch(error => {
         console.error('Error Fetching The Weather:', error);
@@ -67,11 +62,14 @@ function App() {
 
 
   const renderSpotifyPlayer = () => {
-    if (!playlistData || !playlistData.spotifyUri) {
-      console.log("No playlist URI found or playlistData is null.");
+    if (!playlistUri) {
+      console.log("No playlist URI found.");
       return null;
     }
-    const src = `https://open.spotify.com/embed/playlist/${playlistData.spotifyUri.split(':').pop()}`;
+    // need just the "playlist_id" part
+    const playlistId = playlistUri.split(':').pop();
+    console.log(playlistId)
+    const src = `https://open.spotify.com/embed/playlist/${playlistId}`;
     return (
       <iframe
         src={src}
@@ -80,6 +78,7 @@ function App() {
         frameBorder="0"
         allowTransparency="true"
         allow="encrypted-media"
+        title="Spotify"
       ></iframe>
     );
   };
