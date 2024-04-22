@@ -102,36 +102,4 @@ async function getPlaylist(playlistId, access_token) {
     return response.data;
 }
 
-
 module.exports = router;
-
-// router.get('/callback', async function (req, res) {
-//     var code = req.query.code || null;
-
-//     try {
-//         const response = await axios({
-//             method: 'post',
-//             url: 'https://accounts.spotify.com/api/token',
-//             data: querystring.stringify({
-//                 code: code,
-//                 redirect_uri: redirect_uri,
-//                 grant_type: 'authorization_code'
-//             }),
-//             headers: {
-//                 'Content-Type': 'application/x-www-form-urlencoded',
-//                 'Authorization': 'Basic ' + Buffer.from(client_id + ':' + client_secret).toString('base64')
-//             },
-//         });
-
-//         console.log("got here before token")
-//         const access_token = response.data;
-
-
-//         // res.redirect('/#access_token=' + access_token);
-
-//     } catch (error) {
-//         console.error('Error in Spotify API:', error);
-//         res.status(500).json({ error: 'Failed to retrieve Spotify token' });
-//     }
-
-// });
