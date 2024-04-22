@@ -31,7 +31,7 @@ function App() {
   };
 
   const handleSpotifyLogin = () => {
-    window.location.href = 'http://localhost:5000/login'; // redirect to the  spotify login page
+    window.location.href = 'http://localhost:5000/login'; // redirect to the spotify login page
   };
 
   const handleEnterAndLogin = () => {

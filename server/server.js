@@ -6,9 +6,6 @@ const port = process.env.PORT || 5000;
 
 const routes = require('./routes');
 
-app.get('/', (req, res) => {
-    res.send("hello");
-});
 
 //mongoose.connect(process.env.MONGODB_URI, {
 //    useNewUrlParser: true,
