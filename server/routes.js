@@ -3,11 +3,7 @@ const axios = require('axios');
 const express = require('express');
 const cors = require('cors');
 const querystring = require('querystring');
-const fs = require('fs');
-const path = require('path');
 
-// Define the path to the output.txt file
-const filePath = './output.txt';
 
 const app = express();
 
@@ -55,6 +51,8 @@ router.get('/weather', async (req, res) => {
         if (!playlistId) {
             return res.status(404).json({ error: 'No playlist found for this weather condition.' });
         }
+
+        const access_token = 'BQCt4JL-VGVtMOvey1zgIjXxbzSSwdU1dg9yttYfIXDMG8cAcJpDj5mDmtGKnvm5yCp1VoOOUwFJDOoNI6mYc8Cbt-1ulsro2ZhR5ybNxjsX7qRyZ-Q';
 
         try {
             const response = await getPlaylist(playlistId, access_token);
