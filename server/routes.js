@@ -9,7 +9,8 @@ const app = express();
 const corsOptions = {
     origin: 'http://localhost:5173',
     methods: ['GET', 'POST'], // Methods allowed for CORS
-    credentials: true // / This allows cookies to be sent along with the request
+    credentials: true, // / This allows cookies to be sent along with the request
+    optionsSuccessStatus: 200
 };
 
 app.use(cors(corsOptions));
@@ -58,7 +59,9 @@ router.get('/weather', async (req, res) => {
 
         const spotifyResponse = await getPlaylist(playlistId, access_token, res);
         console.log(spotifyResponse)
-        res.json(spotifyResponse);
+        if (spotifyResponse) {
+            res.send(spotifyResponse);
+        }
 
     } catch (error) {
         console.error('Error in Weather API or Spotify API:', error);

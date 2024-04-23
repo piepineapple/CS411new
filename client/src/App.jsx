@@ -1,28 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
 function App() {
-  const google = window.google;
-
-  const handleCallbackResponse = (response) => {
-    console.log("Encoded JWT ID token: " + response.credential)
-  }
-
-  useEffect(() => {
-    google.accounts.id.initialize({
-      client_id: "358020241759-h8p3kof54voihbcqhqpk7ev2v70ualf4.apps.googleusercontent.com",
-      callback: handleCallbackResponse
-    });
-
-    google.accounts.id.renderButton(
-      document.getElementById("sign-in-div"),
-      { theme: "outline", size: "large" }
-    );
-  }, []);
 
   const [inputValue, setInputValue] = useState('');
   const [showPlaylist, setShowPlaylist] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [playlistUri, setPlaylistUri] = useState('');
+  const [checkClick, setcheckClick] = useState(false);
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
@@ -30,16 +14,34 @@ function App() {
     setErrorMessage('');
   };
 
-  const handleEnterAndLogin = () => {
+  const handleSpotifyLogin = () => {
+    window.location.href = 'http://localhost:5000/login'; // Only initiate Spotify login
+  };
+
+  const handleFetchData = () => {
     if (inputValue.trim() === '') {
       setErrorMessage('Input needed');
       return; // Stop the function if input is empty
     }
-
-    window.location.href = 'http://localhost:5000/login'; // Initiate Spotify login
-    fetchWeatherData();  // Fetch weather data
+    setcheckClick(true); // Will trigger fetching data
   };
 
+  // const handleEnterAndLogin = () => {
+  //   if (inputValue.trim() === '') {
+  //     setErrorMessage('Input needed');
+  //     return; // Stop the function if input is empty
+  //   }
+  //   window.location.href = 'http://localhost:5000/login' // Initiate Spotify login
+  //   setcheckClick(true);
+  // };
+  // boolean variable to check if the button has been clicked or not. 
+  // if the button has been clicked, change the function value to true and add it as a trigger to the useEffect
+
+  useEffect(() => {
+    if (checkClick) { // Ensure that fetching only happens if triggered by user action
+      fetchWeatherData();
+    }
+  }, [checkClick]);
 
   const fetchWeatherData = () => {
     fetch(`http://localhost:5000/weather?city=${encodeURIComponent(inputValue)}`)
@@ -50,6 +52,9 @@ function App() {
         return response.text();
       })
       .then(playlistUri => {
+
+        console.log(playlistUri)
+
         setPlaylistUri(playlistUri);
         setShowPlaylist(true);
         setErrorMessage('');
@@ -60,27 +65,23 @@ function App() {
       });
   };
 
-
   const renderSpotifyPlayer = () => {
-    if (!playlistUri) {
-      console.log("No playlist URI found.");
-      return null;
+    if (playlistUri) {
+      const playlistId = playlistUri.split(':').pop();
+      const src = `https://open.spotify.com/embed/playlist/${playlistId}`;
+      return (
+        <iframe
+          src={src}
+          width="300"
+          height="380"
+          frameBorder="0"
+          allowTransparency="true"
+          allow="encrypted-media"
+          title="Spotify"
+        ></iframe>
+      );
     }
-    // need just the "playlist_id" part
-    const playlistId = playlistUri.split(':').pop();
-    console.log(playlistId)
-    const src = `https://open.spotify.com/embed/playlist/${playlistId}`;
-    return (
-      <iframe
-        src={src}
-        width="300"
-        height="380"
-        frameBorder="0"
-        allowTransparency="true"
-        allow="encrypted-media"
-        title="Spotify"
-      ></iframe>
-    );
+    return null;
   };
 
   return (
@@ -96,11 +97,16 @@ function App() {
           style={{ margin: '10px', textAlign: 'center', width: '90%', height: '40px', padding: '10px', background: 'rgba(255, 255, 255, 0.8)', border: 'none', borderBottom: '1px solid #ccc', outline: 'none', borderRadius: '5px', color: '#333', fontSize: '20px', fontWeight: 'bold' }}
         />
         <br />
-        <button onClick={handleEnterAndLogin} style={{ background: 'transparent', border: 'none', padding: '10px 20px', cursor: 'pointer', borderRadius: '5px', color: '#333', fontSize: '18px', boxShadow: '0 2px 2px rgba(0, 0, 0, 0.1)' }}>Enter and Login with Spotify</button>
+        <button onClick={handleSpotifyLogin} style={{ margin: '10px 10px 10px 0', background: 'transparent', border: 'none', padding: '10px 20px', cursor: 'pointer', borderRadius: '5px', color: '#333', fontSize: '18px', boxShadow: '0 2px 2px rgba(0, 0, 0, 0.1)' }}>
+          Login with Spotify
+        </button>
+        <button onClick={handleFetchData} style={{ margin: '10px 0 10px 10px', background: 'transparent', border: 'none', padding: '10px 20px', cursor: 'pointer', borderRadius: '5px', color: '#333', fontSize: '18px', boxShadow: '0 2px 2px rgba(0, 0, 0, 0.1)' }}>
+          Get Playlist
+        </button>
         {errorMessage && (
           <p style={{ color: 'red' }}>{errorMessage}</p>
         )}
-        {showPlaylist && renderSpotifyPlayer()}
+        {showPlaylist && playlistUri && renderSpotifyPlayer()}
       </div>
     </div>
   );
