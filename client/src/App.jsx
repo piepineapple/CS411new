@@ -50,8 +50,9 @@ function App() {
         setcheckClick(false); // reset the click state (so user can enter another location)
       })
       .catch(error => {
+        setcheckClick(false);
         console.error('Error Fetching The Weather:', error);
-        setErrorMessage('Error Fetching The Weather!');
+        setErrorMessage('Not a Valid City!');
       });
   };
 
