@@ -26,17 +26,6 @@ function App() {
     setcheckClick(true); // Will trigger fetching data
   };
 
-  // const handleEnterAndLogin = () => {
-  //   if (inputValue.trim() === '') {
-  //     setErrorMessage('Input needed');
-  //     return; // Stop the function if input is empty
-  //   }
-  //   window.location.href = 'http://localhost:5000/login' // Initiate Spotify login
-  //   setcheckClick(true);
-  // };
-  // boolean variable to check if the button has been clicked or not. 
-  // if the button has been clicked, change the function value to true and add it as a trigger to the useEffect
-
   useEffect(() => {
     if (checkClick) { // Ensure that fetching only happens if triggered by user action
       fetchWeatherData();
@@ -58,6 +47,7 @@ function App() {
         setPlaylistUri(playlistUri);
         setShowPlaylist(true);
         setErrorMessage('');
+        setcheckClick(false); // reset the click state (so user can enter another location)
       })
       .catch(error => {
         console.error('Error Fetching The Weather:', error);

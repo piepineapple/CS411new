@@ -82,7 +82,6 @@ router.get('/login', function (req, res) {
         }));
 });
 
-
 async function getPlaylist(playlistId, accessToken, res) {
 
     if (!accessToken) {
