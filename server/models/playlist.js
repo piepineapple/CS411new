@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const playlistSchema = new mongoose.Schema({
   url: {
     type: String,
-    required: true, // This field is mandatory
+    required: true,
   },
   createdAt: {
     type: Date,

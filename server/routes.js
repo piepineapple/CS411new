@@ -104,16 +104,20 @@ async function getPlaylist(playlistId, accessToken, res) {
     }
 }
 
-// Save a story to MongoDB
+// Save a playlist to MongoDB
 router.post("/save-playlist", async (req, res) => {
     try {
+        console.log("got here")
         const { url } = req.body;
         const existingPlaylist = await Playlist.findOne({ url });
         if (existingPlaylist) {
+            console.log("Playlist already exists!")
             return res.status(409).send("Playlist already exists.");
+
         }
         const list = new Playlist({ url });
         await list.save();
+        console.log("Saved the playlist!")
         res.status(201).json(list);
     } catch (error) {
         res.status(500).send(error.toString());

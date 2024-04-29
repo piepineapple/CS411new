@@ -29,6 +29,7 @@ function App() {
   useEffect(() => {
     if (checkClick) { // Ensure that fetching only happens if triggered by user action
       fetchWeatherData();
+      handleSavePlaylist();
     }
   }, [checkClick]);
 
@@ -54,6 +55,20 @@ function App() {
         console.error('Error Fetching The Weather:', error);
         setErrorMessage('Not a Valid City!');
       });
+  };
+
+  const handleSavePlaylist = async () => {
+    try {
+      const response = await axios.post('http://localhost:5000/save-playlist', {
+        url: playlistUri
+      });
+    } catch (error) {
+      if (error.response && error.response.status === 409) {
+        console.log('Playlist already exists.');
+      } else {
+        console.error('Error saving the playlist:', error.response || error);
+      }
+    }
   };
 
   const renderSpotifyPlayer = () => {
