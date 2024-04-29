@@ -3,6 +3,7 @@ const axios = require('axios');
 const express = require('express');
 const cors = require('cors');
 const querystring = require('querystring');
+const Playlist = require("./models/playlist");
 
 const app = express();
 
@@ -30,6 +31,7 @@ const playlistsByWeather = {
     "Clouds": "70CgUbf2RjYd5eqXYvObpT",
     "Rain": "47S4MBG0EEXwA0GdJUA4Ur",
     "Mist": "1J4J4ylYCRrB5eEYQoz7Rz",
+    "Snow": "4raqLXnmb8WYkjfed9olAR"
 };
 
 router.get('/weather', async (req, res) => {
@@ -101,5 +103,21 @@ async function getPlaylist(playlistId, accessToken, res) {
         throw new Error('Failed to fetch playlist from Spotify.');
     }
 }
+
+// Save a story to MongoDB
+router.post("/save-playlist", async (req, res) => {
+    try {
+        const { url } = req.body;
+        const existingPlaylist = await Playlist.findOne({ url });
+        if (existingPlaylist) {
+            return res.status(409).send("Playlist already exists.");
+        }
+        const list = new Playlist({ url });
+        await list.save();
+        res.status(201).json(list);
+    } catch (error) {
+        res.status(500).send(error.toString());
+    }
+});
 
 module.exports = router;
