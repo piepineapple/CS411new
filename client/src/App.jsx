@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function App() {
 
@@ -29,7 +30,6 @@ function App() {
   useEffect(() => {
     if (checkClick) { // Ensure that fetching only happens if triggered by user action
       fetchWeatherData();
-      handleSavePlaylist();
     }
   }, [checkClick]);
 
@@ -46,6 +46,7 @@ function App() {
         console.log(playlistUri)
 
         setPlaylistUri(playlistUri);
+        handleSavePlaylist();
         setShowPlaylist(true);
         setErrorMessage('');
         setcheckClick(false); // reset the click state (so user can enter another location)
